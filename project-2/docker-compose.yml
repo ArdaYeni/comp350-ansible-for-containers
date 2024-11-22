@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  control-node:
+    build:
+      context: ./control-node
+      dockerfile: Dockerfile
+    container_name: control-node
+    volumes:
+      - ./control-node/ansible:/etc/ansible
+    ports:
+      - "2233:22"
+    tty: true
+    networks:
+      - ansible-network
+
+  managed-node1:
+    build:
+      context: ./managed-node
+      dockerfile: Dockerfile
+    container_name: managed-node1
+    ports:
+      - "2222:22"
+      - "8081:80"
+    tty: true
+    networks:
+      - ansible-network
+
+  managed-node2:
+    build:
+      context: ./managed-node
+      dockerfile: Dockerfile
+    container_name: managed-node2
+    ports:
+      - "2223:22"
+      - "8082:80"
+    tty: true
+    networks:
+      - ansible-network
+
+networks:
+  ansible-network:
+    driver: bridge

@@ -1,0 +1,54 @@
+---
+- name: Configure web server
+  hosts: managed_nodes
+  become: yes
+
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Create Nginx file
+      copy:
+        dest: /etc/nginx/sites-enabled/default
+        content: |
+          server {
+              listen 80 default_server;
+              listen [::]:80 default_server;
+              
+              root /var/www/html;
+              index index.html;
+              
+              server_name _;
+              
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+          }
+
+    - name: Create index.html
+      copy:
+        dest: /var/www/html/index.html
+        content: |
+          <html>
+          <head>
+              <title>Congratulations </title>
+          </head>
+          <body>
+              <h1> Nginx server is running.</h1>
+          </body>
+           <body>
+              <h1>Gülnisa Yıldırım</h1>
+          </body>
+          <body>
+              <h1> Arda Yeni </h1>
+          </body>
+          </html>
+
+    - name: Ensure Nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
